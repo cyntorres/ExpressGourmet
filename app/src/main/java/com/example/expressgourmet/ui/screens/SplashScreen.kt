@@ -37,13 +37,15 @@ import com.example.expressgourmet.ui.theme.Orange
 
 @Preview(showBackground = true)
 @Composable
-fun SplashScreen(){
+fun SplashScreen(
+    onStartClick: () -> Unit = {}
+) {
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
-    ){
+    ) {
         Image(
             painter = painterResource(R.drawable.fondo), // Carga una IMAGEN desde los recursos
             contentDescription = "Fondo",
@@ -58,7 +60,7 @@ fun SplashScreen(){
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 80.dp, start = 20.dp, end = 20.dp, bottom = 80.dp),
+                .padding(top = 60.dp, start = 25.dp, end = 25.dp, bottom = 80.dp),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Bottom
         ) {
@@ -66,13 +68,13 @@ fun SplashScreen(){
                 Text(
                     text = "Express",
                     color = Color.White,
-                    fontSize = 65.sp,
+                    fontSize = 58.sp,
                     fontWeight = FontWeight.ExtraBold
                 )
                 Text(
                     text = "Gourmet",
                     color = Orange,
-                    fontSize = 55.sp,
+                    fontSize = 60.sp,
                     fontWeight = FontWeight.ExtraBold
                 )
             }
@@ -81,7 +83,7 @@ fun SplashScreen(){
 
             Text(
                 text = "Recetas saludables para tu día a día.",
-                modifier = Modifier.semantics{
+                modifier = Modifier.semantics {
                     contentDescription = "Eslogan: Recetas saludables para tu día a día."
                 },
                 color = Color.White,
@@ -92,11 +94,11 @@ fun SplashScreen(){
             Spacer(modifier = Modifier.height(40.dp))
 
             Button(
-                onClick = { /* Acción */ },
+                onClick = onStartClick,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(65.dp),
-                shape = RoundedCornerShape(20.dp),
+                    .height(60.dp),
+                shape = RoundedCornerShape(15.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Orange)
             ) {
                 Row(
@@ -105,7 +107,7 @@ fun SplashScreen(){
                     Text(
                         text = "COMENZAR",
                         color = Color.White,
-                        fontSize = 25.sp,
+                        fontSize = 20.sp,
                         fontWeight = FontWeight.Bold
 
                     )
@@ -118,11 +120,11 @@ fun SplashScreen(){
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
-            ){
+            ) {
                 Text(
                     text = "¿Ya tienes cuenta?",
                     color = Color.White,
-                    fontSize = 20.sp
+                    fontSize = 18.sp
                 )
 
                 Spacer(Modifier.width(width = 15.dp))
@@ -130,7 +132,7 @@ fun SplashScreen(){
                 Text(
                     text = "Inicia sesión",
                     color = Orange,
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
             }
