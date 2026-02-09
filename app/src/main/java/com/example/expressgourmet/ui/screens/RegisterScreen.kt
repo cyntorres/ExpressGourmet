@@ -1,6 +1,8 @@
 package com.example.expressgourmet.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,21 +31,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.expressgourmet.model.Persona
+import com.example.expressgourmet.service.PersonaService
 import com.example.expressgourmet.ui.theme.Orange
 
 @Preview(showBackground = true)
 @Composable
 fun RegisterScreen(
-    onLoginClick: () -> Unit = {}
+    onLoginClick: () -> Unit = {},
+    onRegistroClick: () -> Unit = {}
 ) {
 
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -159,8 +166,14 @@ fun RegisterScreen(
 
             Button(
                 onClick = {
-                    guardarDatos(name, email, password)
-                    onLoginClick()
+                    val nuevaPersona = Persona(
+                        nombre = name,
+                        correo = email,
+                        contraseña = password
+                    )
+                    PersonaService.agregarPersona(nuevaPersona)
+                    Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
+                    onRegistroClick()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -198,23 +211,13 @@ fun RegisterScreen(
 
                 Text(
                     text = "Inicia sesión",
+                    modifier = Modifier
+                        .clickable { onLoginClick() },
                     color = Orange,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold
                 )
             }
         }
-    }
-}
-
-val listaUsuarios = mutableListOf<Usuario>()
-
-fun guardarDatos(nombre: String, correo: String, contrasena: String) {
-    if (listaUsuarios.size < 5) {
-        val nuevoUsuario = Usuario(nombre, correo, contrasena)
-        listaUsuarios.add(nuevoUsuario)
-        println("Usuario guardado con éxito. Total: ${listaUsuarios.size}")
-    } else {
-        println("No se pueden agregar más de 5 usuarios.")
     }
 }
