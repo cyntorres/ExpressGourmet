@@ -19,7 +19,11 @@ sealed class Screen(val route: String) {
 }
 
 @Composable
-fun NavGraph(navController: NavHostController) {
+fun NavGraph(navController: NavHostController,
+             darkTheme: Boolean,
+             onToggleDarkTheme: () -> Unit,
+             onScaleFont: (Float) -> Unit
+) {
 
     NavHost(
         navController = navController,
@@ -40,9 +44,9 @@ fun NavGraph(navController: NavHostController) {
                 onLoginClick = {
                     navController.navigate(Screen.LoginScreen.route)
                 },
-                onRegistroClick = {
-                    navController.navigate(Screen.RegisterScreen.route)
-                },
+                onLoginSuccess = {
+                    navController.navigate(Screen.HomeUserScreen.route)
+                }
             )
         }
 
@@ -54,10 +58,6 @@ fun NavGraph(navController: NavHostController) {
 
                 onRecoverClick = {
                     navController.navigate(Screen.RecoverScreen.route)
-                },
-
-                onLoginSuccess = {
-                    navController.navigate(Screen.HomeUserScreen.route)
                 }
             )
         }
@@ -70,11 +70,12 @@ fun NavGraph(navController: NavHostController) {
             })
         }
 
-        // ... otros composables
         composable(Screen.HomeUserScreen.route) {
-            // Aquí debes llamar a la función de la UI, no a la clase Screen
-            HomeUserScreen()
+            HomeUserScreen(
+                darkTheme = darkTheme,
+                onToggleDarkTheme = onToggleDarkTheme,
+                onScaleFont = onScaleFont
+            )
         }
-
     }
 }

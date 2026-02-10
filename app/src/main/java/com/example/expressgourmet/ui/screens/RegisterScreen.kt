@@ -44,7 +44,8 @@ import com.example.expressgourmet.ui.theme.Orange
 @Composable
 fun RegisterScreen(
     onLoginClick: () -> Unit = {},
-    onRegistroClick: () -> Unit = {}
+    //onRegistroClick: () -> Unit = {},
+    onLoginSuccess:() -> Unit = {}
 ) {
 
     var name by remember { mutableStateOf("") }
@@ -173,7 +174,7 @@ fun RegisterScreen(
                     )
                     PersonaService.agregarPersona(nuevaPersona)
                     Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
-                    onRegistroClick()
+                    onLoginSuccess()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
