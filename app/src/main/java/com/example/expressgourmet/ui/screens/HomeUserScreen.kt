@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.example.expressgourmet.R
 
 data class Receta(
-    val id: Int, // Añadido ID para identificar cuál borrar
+    val id: Int,
     val nombre: String,
     val tiempo: String,
     val dificultad: String,
@@ -38,12 +38,9 @@ fun HomeUserScreen(
     onScaleFont: (Float) -> Unit
 ) {
     val context = LocalContext.current
-
-    // 1. ESTADOS PARA FILTROS
     var searchQuery by remember { mutableStateOf("") }
     var categoriaSeleccionada by remember { mutableStateOf("Todo") }
 
-    // 2. ESTADO DE LA LISTA (DATOS DINÁMICOS)
     val listaRecetas = remember {
         mutableStateListOf(
             Receta(1, "Ensalada de pollo", "25 min", "Media", "4.9", R.drawable.home),
@@ -51,23 +48,15 @@ fun HomeUserScreen(
         )
     }
 
-    // 3. LÓGICA DE FILTRADO (Se aplica antes de mostrar la lista)
-    val recetasFiltradas = listaRecetas.filter { receta ->
-        val matchesSearch = receta.nombre.contains(searchQuery, ignoreCase = true)
-        // Como tu clase Receta actual no tiene campo 'categoria', filtramos por nombre por ahora
-        // o puedes añadir el campo a la data class para un filtro más preciso.
-        matchesSearch
-    }
-
+    val recetasFiltradas = listaRecetas.filter { it.nombre.contains(searchQuery, ignoreCase = true) }
     val categorias = listOf("Todo", "Italiana", "Postres", "Francesa")
 
-    // ESTADOS PARA EL FORMULARIO (MODAL)
     var showDialog by remember { mutableStateOf(false) }
     var nombreInput by remember { mutableStateOf("") }
     var tiempoInput by remember { mutableStateOf("") }
     var recetaAEditar by remember { mutableStateOf<Receta?>(null) }
 
-    // --- DIÁLOGO DINÁMICO (Sin cambios en tu lógica) ---
+    // --- DIÁLOGO DE EDICIÓN/CREACIÓN ---
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false; recetaAEditar = null },
@@ -117,11 +106,46 @@ fun HomeUserScreen(
         modifier = Modifier.statusBarsPadding(),
         topBar = {
             Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
-                // Header (Express Gourmet) y botones de accesibilidad aquí...
 
-                Spacer(modifier = Modifier.height(16.dp))
+                // --- BOTONES DE ACCESIBILIDAD RESTAURADOS ---
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
 
-                // BUSCADOR CONECTADO AL FILTRO
+                    IconButton(onClick = onToggleDarkTheme) {
+                        Icon(
+                            painter = painterResource(
+                                id = if (darkTheme) R.drawable.light_mode
+                                else R.drawable.mode_night
+                            ),
+                            contentDescription = "Alternar Tema",
+                            tint = Color.Unspecified
+                        )
+                    }
+
+                    IconButton(onClick = { onScaleFont(0.8f) }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.menos), // Reemplaza con el nombre de tu XML
+                            contentDescription = "Texto Pequeño",
+                            modifier = Modifier.size(18.dp),
+                            tint = Color.Unspecified // Usa esto si tu XML ya tiene colores propios
+                        )
+                    }
+
+                    IconButton(onClick = { onScaleFont(1.2f) }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.mas), // Reemplaza con el nombre de tu XML
+                            contentDescription = "Texto Grande",
+                            modifier = Modifier.size(28.dp),
+                            tint = Color.Unspecified
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
                 OutlinedTextField(
                     value = searchQuery,
                     onValueChange = { searchQuery = it },
@@ -147,13 +171,12 @@ fun HomeUserScreen(
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // 3. CATEGORÍAS FUNCIONALES
             item {
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(categorias) { cat ->
                         FilterChip(
                             selected = categoriaSeleccionada == cat,
-                            onClick = { categoriaSeleccionada = cat }, // Actualiza el estado
+                            onClick = { categoriaSeleccionada = cat },
                             label = { Text(cat) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = Color(0xFFE67E22),
@@ -168,12 +191,11 @@ fun HomeUserScreen(
                 Text("Resultados (${recetasFiltradas.size})", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
             }
 
-            // 4. LISTA FILTRADA
             items(recetasFiltradas, key = { it.id }) { receta ->
                 Card(
                     shape = RoundedCornerShape(24.dp),
                     elevation = CardDefaults.cardElevation(2.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    colors = CardDefaults.cardColors(containerColor = if(darkTheme) Color.DarkGray else Color.White),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Column {
@@ -185,7 +207,6 @@ fun HomeUserScreen(
                                 contentScale = ContentScale.Crop
                             )
 
-                            // BOTONES DE EDICIÓN/BORRADO (Se mantienen igual)
                             Row(
                                 modifier = Modifier.align(Alignment.BottomEnd).padding(12.dp),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -217,13 +238,10 @@ fun HomeUserScreen(
                                 Icon(Icons.Default.Star, null, tint = Color(0xFFFFB300), modifier = Modifier.size(16.dp))
                                 Text(" " + receta.calificacion, style = MaterialTheme.typography.bodySmall)
                             }
-                            // ... resto de la info
                         }
                     }
                 }
             }
-
-            // Botón "Agregar nueva receta" punteado al final...
         }
     }
 }
